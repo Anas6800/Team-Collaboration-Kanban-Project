@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-blue-400 to-purple-500 rounded-full;
+  transition: all 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply from-blue-500 to-purple-600;
+}
+
+
+/* Simplified gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Simplified card hover effects */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Simplified buttons */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-6 py-2.5 rounded-lg border border-gray-300 transition-all duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-all duration-200;
+}
+
+.btn-success {
+  @apply bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-all duration-200;
+}
+
+/* Simplified input styles */
+.input-modern {
+  @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white placeholder:text-gray-400;
+}
+
+/* Simplified task card styles */
+.task-card {
+  @apply bg-white rounded-lg p-4 shadow-sm hover:shadow-md border border-gray-200 transition-all duration-200 cursor-pointer;
+}
+
+.task-card:hover {
+  @apply border-blue-300 shadow-md transform -translate-y-0.5;
+}
+
+/* Simplified column styles - Responsive */
+.column-container {
+  @apply bg-gray-50 rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200;
+  min-height: 300px;
+}
+
+@screen sm {
+  .column-container {
+    min-height: 400px;
+  }
+}
+
+@screen md {
+  .column-container {
+    min-height: 600px;
+  }
+}
+
+/* Enhanced priority badges */
+.priority-high {
+  @apply bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg;
+}
+
+.priority-medium {
+  @apply bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg;
+}
+
+.priority-low {
+  @apply bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg;
+}
+
+/* Simplified containers */
+.page-container {
+  @apply min-h-screen bg-gray-50;
+}
+
+.auth-container {
+  @apply min-h-screen flex items-center justify-center p-6 bg-gray-100;
+}
+
+/* Simplified card styles */
+.card {
+  @apply bg-white rounded-lg p-6 shadow-sm border border-gray-200;
+}
+
+/* Loading animations */
+.loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-4 border-blue-200 border-t-blue-600;
+}
+
+/* Simple fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Simplified navigation styles */
+.nav-glass {
+  @apply bg-white border-b border-gray-200 shadow-sm;
+}
+
+/* Simplified drag and drop styles */
+.drop-zone-active {
+  @apply border-blue-400 bg-blue-50;
+}
+
+.drop-zone-pulse {
+  @apply border-blue-400 bg-blue-50;
+}
