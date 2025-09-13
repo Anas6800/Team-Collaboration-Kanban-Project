@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useAuth } from './AuthContext'
 import { type Team, createTeam, listUserTeams, deleteTeam } from '../services/teams'
+import { getUsersByIds } from '../services/users'
 
 export type TeamContextValue = {
 	teams: Team[]
@@ -15,6 +16,9 @@ export type TeamContextValue = {
 	isMember: (teamId?: string) => boolean
 	canDeleteTasks: (teamId?: string) => boolean
 	canManageTeam: (teamId?: string) => boolean
+	// Team members
+	teamMembers: any[]
+	fetchTeamMembers: () => Promise<void>
 }
 
 const TeamContext = createContext<TeamContextValue | undefined>(undefined)
@@ -24,6 +28,7 @@ export const TeamProvider = ({ children }: { children: React.ReactNode }) => {
 	const [teams, setTeams] = useState<Team[]>([])
 	const [currentTeamId, setCurrentTeamId] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
+	const [teamMembers, setTeamMembers] = useState<any[]>([])
 
 	useEffect(() => {
 		if (!user) {
@@ -92,6 +97,76 @@ export const TeamProvider = ({ children }: { children: React.ReactNode }) => {
 		// Only owners can manage team (invite/remove members, delete team)
 		return isOwner(teamId)
 	}
+	
+	// Fetch team members for the current team
+	const fetchTeamMembers = async () => {
+		if (!currentTeamId || !user) {
+			setTeamMembers([])
+			return
+		}
+		
+		try {
+			// Get the current team
+			const currentTeam = teams.find(t => t.id === currentTeamId)
+			if (!currentTeam || !currentTeam.members) {
+				setTeamMembers([])
+				return
+			}
+			
+			// Fetch user profiles for all team members
+			const memberProfiles = await getUsersByIds(currentTeam.members)
+			
+			// Create member objects with proper roles
+			const members = currentTeam.members.map(memberId => {
+				// Check if we have user profile data from Firebase
+				const userProfile = memberProfiles[memberId]
+				
+				// If we have the profile, use it
+				if (userProfile) {
+					return {
+						id: memberId,
+						name: userProfile.name,
+						email: userProfile.email,
+						role: memberId === currentTeam.ownerId ? 'owner' : 'member'
+					}
+				}
+				
+				// Fallback: Check memberInfo stored in team document
+				const memberInfo = currentTeam.memberInfo?.[memberId]
+				if (memberInfo) {
+					return {
+						id: memberId,
+						name: memberInfo.name || memberInfo.email?.split('@')[0] || 'Unknown User',
+						email: memberInfo.email || 'No email',
+						role: memberId === currentTeam.ownerId ? 'owner' : 'member'
+					}
+				}
+				
+				// Final fallback: Use the current user's data if it's them
+				if (memberId === user.uid) {
+					return {
+						id: memberId,
+						name: user.displayName || user.email?.split('@')[0] || 'You',
+						email: user.email || '',
+						role: memberId === currentTeam.ownerId ? 'owner' : 'member'
+					}
+				}
+				
+				// Last resort fallback
+				return {
+					id: memberId,
+					name: 'Unknown User',
+					email: 'No email available',
+					role: memberId === currentTeam.ownerId ? 'owner' : 'member'
+				}
+			}).filter(member => member !== null) // Remove any null entries
+			
+			setTeamMembers(members)
+		} catch (error) {
+			console.error('Failed to fetch team members:', error)
+			setTeamMembers([])
+		}
+	}
 
 	const value = useMemo(
 		() => ({ 
@@ -105,9 +180,11 @@ export const TeamProvider = ({ children }: { children: React.ReactNode }) => {
 			isOwner,
 			isMember,
 			canDeleteTasks,
-			canManageTeam
+			canManageTeam,
+			teamMembers,
+			fetchTeamMembers
 		}),
-		[teams, currentTeamId, loading, user?.uid]
+		[teams, currentTeamId, loading, user?.uid, teamMembers]
 	)
 
 	return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>
